@@ -9,7 +9,9 @@ const { sendMessage } = require('./controllers/sendMessages');
 const { webhook } = require('./controllers/webhook');
 const { setupWebhook } = require('./controllers/setupWebhook');
 
-const upload = multer();
+// Set up multer to handle multipart/form-data
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const app = express();
 app.use(bodyParser.json())
@@ -38,7 +40,7 @@ io.on('connection', (socket) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to send a message via WhatsApp
-app.post('/send-message', upload.fields([{ name: 'message', maxCount: 1 }, { name: 'media', maxCount: 1 }]), sendMessage);
+app.post('/send-message', upload.fields([{ name: 'message' }, { name: 'file' }]), sendMessage);
 
 // Endpoint to for webhook
 app.post("/webhook", webhook);

@@ -21,23 +21,16 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const messageText = messageInput.value.trim();
         const mediaFile = mediaInput.files[0];
-
-        let mediaId = null;
+        console.log(mediaFile)
 
         if (mediaFile) {
-            mediaId = await uploadMedia(mediaFile);
             displayMessage('You', 'photo');
-            console.log(mediaId)
         }
 
-        if (messageText !== '') {
+        if (messageText !== '' || mediaFile) {
             displayMessage('You', messageText);
-            sendMessage(messageText, mediaId);
-        } else if (messageText === '' && mediaFile) {
-            console.log(mediaId)
-            sendMessage(messageText, mediaId);
+            sendMessage(messageText, mediaFile);
         }
-
         // Clear the input fields
         messageInput.value = '';
         mediaInput.value = '';
@@ -52,12 +45,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Function to send message and mediaId to the backend
-    async function sendMessage(message, mediaId) {
+    async function sendMessage(message, media) {
         try {
-            console.log(mediaId)
+            console.log(media)
             const formData = new FormData();
             formData.append('message', message);
-            formData.append('mediaId', mediaId);
+            formData.append('file', media);
 
             const response = await fetch('/send-message', {
                 method: 'POST',

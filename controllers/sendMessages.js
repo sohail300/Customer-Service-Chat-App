@@ -7,17 +7,22 @@ const accessToken = process.env.GRAPH_API_TOKEN;
 async function sendMessage(req, res) {
     try {
         const message = req.body.message;
-        const mediaId = req.body.mediaId;
+        const media = req.files?.file?.[0];
+
+        console.log(media)
+        console.log(message)
+
+        const mediaId = await uploadMedia(media);
         console.log(mediaId)
-        console.log(typeof(mediaId))
 
         if (message !== '') {
             sendTextMessage(message);
         }
 
-        if (mediaId!=='null') {
-            sendMedia(mediaId);
-        }
+        // if (mediaId) {
+        // console.log('1')
+        // sendMedia(mediaId);
+        // }
 
         res.send('Msg sent successfully');
     } catch (error) {
@@ -73,6 +78,29 @@ async function sendMedia(mediaId) {
     });
 
     console.log('Message sent successfully:', responseMedia);
+}
+
+// Function to upload the media and get the mediaId
+async function uploadMedia(mediaFile) {
+    const apiUrlUpload = `https://graph.facebook.com/v19.0/${process.env.BUSINESS_PHONE_NUMBER_ID}/media`;
+
+    console.log(apiUrlUpload)
+    const formData = new FormData();
+    formData.append('file', mediaFile);
+    formData.append('messaging_product', 'whatsapp');
+
+    console.log(formData)
+    console.log(formData.get('messaging_product'))
+    console.log(formData.get('file').fieldname)
+
+    const response = await axios.post(apiUrlUpload, JSON.stringify(formData), {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+        }
+    })
+
+    console.log(response);
+    return 0;
 }
 
 module.exports = { sendMessage }
