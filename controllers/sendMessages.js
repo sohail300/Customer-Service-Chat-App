@@ -10,22 +10,16 @@ async function sendMessage(req, res) {
         const message = req.body.message;
         const media = req.files?.file?.[0];
 
-        console.log(media)
-        console.log(message)
-
         let mediaId = null;
         if (media) {
             mediaId = await uploadMedia(media);
         }
-
-        console.log(mediaId)
 
         if (message !== '') {
             sendTextMessage(message);
         }
 
         if (mediaId !== null) {
-            console.log('1')
             sendMedia(mediaId);
         }
 
@@ -63,7 +57,6 @@ async function sendTextMessage(message) {
 
 async function sendMedia(mediaId) {
     const apiUrl = `https://graph.facebook.com/v19.0/${process.env.BUSINESS_PHONE_NUMBER_ID}/messages`;
-    console.log(mediaId)
 
     const messageDataMedia = JSON.stringify({
         "messaging_product": "whatsapp",
@@ -88,10 +81,8 @@ async function sendMedia(mediaId) {
 // Function to upload the media and get the mediaId
 async function uploadMedia(mediaFile) {
     const apiUrlUpload = `https://graph.facebook.com/v19.0/${process.env.BUSINESS_PHONE_NUMBER_ID}/media`;
-    console.log(apiUrlUpload)
 
     const form = new FormData();
-    console.log('running')
     form.append('file', mediaFile.buffer, {
         filename: mediaFile.originalname,
         contentType: mediaFile.mimetype

@@ -62,7 +62,7 @@ async function webhook(req, res) {
         });
     }
 
-    // check if the incoming message contains text
+    // check if the incoming message contains image
     if (message?.type === "image") {
 
         // extract the business number to send the reply from it

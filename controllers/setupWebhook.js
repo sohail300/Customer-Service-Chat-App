@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.config({});
+dotenv.config();
 
 const { WEBHOOK_VERIFY_TOKEN } = process.env;
 

@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const messageText = messageInput.value.trim();
         const mediaFile = mediaInput.files[0];
-        console.log(mediaFile)
 
         if (mediaFile) {
             displayMessage('You', 'photo');
@@ -53,16 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData();
             formData.append('message', message);
             formData.append('file', media);
-            console.log(message)
-            console.log(media)
-            console.log(formData)
 
             const response = await fetch('/send-message', {
                 method: 'POST',
                 body: formData
             });
-
-            console.log(response)
 
             if (response.ok) {
                 console.log('Message sent successfully');
