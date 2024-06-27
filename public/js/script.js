@@ -27,8 +27,11 @@ document.addEventListener('DOMContentLoaded', function () {
             displayMessage('You', 'photo');
         }
 
-        if (messageText !== '' || mediaFile) {
+        if (messageText !== '') {
             displayMessage('You', messageText);
+        }
+
+        if (messageText !== '' || mediaFile) {
             sendMessage(messageText, mediaFile);
         }
         // Clear the input fields
@@ -47,15 +50,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to send message and mediaId to the backend
     async function sendMessage(message, media) {
         try {
-            console.log(media)
             const formData = new FormData();
             formData.append('message', message);
             formData.append('file', media);
+            console.log(message)
+            console.log(media)
+            console.log(formData)
 
             const response = await fetch('/send-message', {
                 method: 'POST',
                 body: formData
             });
+
+            console.log(response)
 
             if (response.ok) {
                 console.log('Message sent successfully');
@@ -67,24 +74,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
-
-// Function to upload the media and get the mediaId
-async function uploadMedia(mediaFile) {
-    const accessToken = 'EAALZBuA4gLOwBO7oleQMbs9UM92GcGh3lPaMfazarvJQXGVIOSfZASb8o5CZBmPws0AvLy3fLsfdxk38d58NBB8ZASZAjycue8WOZBp87Rtl4sG71wUFjoe2y1pFuVldv6XHU5KiGN3n3h2rneVtoFIMFT98wWxskNGxS2ZCBHHLNODicwEaFVqtHoXqYfUY9CZCRbthgqx4MvjXksitsRUZD';
-
-    const formData = new FormData();
-    formData.append('file', mediaFile);
-    formData.append('messaging_product', 'whatsapp');
-
-    const response = await fetch(`https://graph.facebook.com/v19.0/303164166215061/media`, {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${accessToken}`,
-        },
-        body: formData
-    })
-    const responseData = await response.json();
-    console.log(responseData.id);
-
-    return responseData.id;
-}

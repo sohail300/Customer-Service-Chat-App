@@ -1,7 +1,8 @@
 const axios = require('axios');
 const dotenv = require('dotenv');
+const FormData = require('form-data');
 
-dotenv.config({});
+dotenv.config();
 const accessToken = process.env.GRAPH_API_TOKEN;
 
 async function sendMessage(req, res) {
@@ -12,17 +13,21 @@ async function sendMessage(req, res) {
         console.log(media)
         console.log(message)
 
-        const mediaId = await uploadMedia(media);
+        let mediaId = null;
+        if (media) {
+            mediaId = await uploadMedia(media);
+        }
+
         console.log(mediaId)
 
         if (message !== '') {
             sendTextMessage(message);
         }
 
-        // if (mediaId) {
-        // console.log('1')
-        // sendMedia(mediaId);
-        // }
+        if (mediaId !== null) {
+            console.log('1')
+            sendMedia(mediaId);
+        }
 
         res.send('Msg sent successfully');
     } catch (error) {
@@ -83,24 +88,24 @@ async function sendMedia(mediaId) {
 // Function to upload the media and get the mediaId
 async function uploadMedia(mediaFile) {
     const apiUrlUpload = `https://graph.facebook.com/v19.0/${process.env.BUSINESS_PHONE_NUMBER_ID}/media`;
-
     console.log(apiUrlUpload)
-    const formData = new FormData();
-    formData.append('file', mediaFile);
-    formData.append('messaging_product', 'whatsapp');
 
-    console.log(formData)
-    console.log(formData.get('messaging_product'))
-    console.log(formData.get('file').fieldname)
+    const form = new FormData();
+    console.log('running')
+    form.append('file', mediaFile.buffer, {
+        filename: mediaFile.originalname,
+        contentType: mediaFile.mimetype
+    });
+    form.append('messaging_product', 'whatsapp');
 
-    const response = await axios.post(apiUrlUpload, JSON.stringify(formData), {
+    const response = await axios.post(apiUrlUpload, form, {
         headers: {
             "Authorization": `Bearer ${accessToken}`,
         }
     })
 
-    console.log(response);
-    return 0;
+    console.log(response.data.id);
+    return response.data.id;
 }
 
 module.exports = { sendMessage }
